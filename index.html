@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pantheon</title>
+<meta name="description" content="Pantheon: um conselho de IAs para a sua organização. App para Mac.">
+<meta name="theme-color" content="#0E0D12">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; font-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src https://api.github.com">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<style>
+  @font-face { font-family: "Cormorant Garamond"; src: url("fonts/cormorant-garamond-latin-600-normal.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+  @font-face { font-family: "Cormorant Garamond"; src: url("fonts/cormorant-garamond-latin-500-italic.woff2") format("woff2"); font-weight: 500; font-style: italic; font-display: swap; }
+  @font-face { font-family: "Cinzel"; src: url("fonts/cinzel-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+  @font-face { font-family: "Inter"; src: url("fonts/inter-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Inter"; src: url("fonts/inter-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+
+  :root {
+    --bg: #0E0D12; --bg-deep: #0B0A0F; --surface: #15141A; --surface-2: #1F1E26; --rule-strong: #26242D;
+    --control-border: #5A5566; --ink: #ECE7DC; --ink-2: #DAD4C7; --muted: #9B9484;
+    --gold: #C9A961; --gold-soft: #E3C77E; --gold-rule: #2E2A22; --on-gold: #0E0D12; --warn: #E8A54B;
+    --display: "Cormorant Garamond", Georgia, serif; --label: "Cinzel", Georgia, serif;
+    --body: "Inter", system-ui, -apple-system, sans-serif;
+    --radius: 12px; --radius-s: 7px; --t: 180ms cubic-bezier(.2,.7,.2,1);
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body { margin: 0; min-height: 100vh; color: var(--ink); font: 400 16px/1.55 var(--body); -webkit-font-smoothing: antialiased;
+    background: radial-gradient(1200px 600px at 30% 110%, #1E1A2A, transparent 60%), var(--bg); }
+  a { color: var(--gold-soft); }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+
+  header { background: var(--bg-deep); border-bottom: 1px solid var(--rule-strong); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; min-height: 56px; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 500 14px/1 var(--label); letter-spacing: .22em; text-transform: uppercase; }
+  .brand img { width: 28px; height: 28px; border-radius: 7px; }
+  .lang { font: 500 12px/1 var(--body); color: var(--ink-2); background: transparent; border: 1px solid var(--control-border);
+    border-radius: var(--radius-s); min-height: 32px; padding: 0 12px; cursor: pointer; }
+  .lang:hover { background: var(--surface-2); }
+  .meander { height: 10px; opacity: .4; background: repeating-linear-gradient(90deg, var(--gold) 0 10px, transparent 10px 20px); }
+
+  .hero { padding: 64px 0 40px; text-align: center; }
+  .hero img { width: 112px; height: 112px; border-radius: 26px; margin: 0 auto 24px; display: block; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  .kicker { font: 500 11px/1 var(--label); letter-spacing: .22em; text-transform: uppercase; color: var(--gold); margin: 0 0 14px; }
+  h1 { margin: 0 0 18px; font: 600 clamp(34px, 7vw, 52px)/1.05 var(--display); }
+  .lead { color: var(--ink-2); margin: 0 auto 28px; max-width: 56ch; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 22px; border-radius: var(--radius-s);
+    background: var(--gold); color: var(--on-gold); font: 500 15px/1 var(--body); text-decoration: none; transition: filter var(--t), transform var(--t); }
+  .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .small { color: var(--muted); font-size: 12px; margin: 12px 0 0; }
+
+  h2 { margin: 0 0 6px; font: 600 28px/1.1 var(--display); }
+  .versions { padding: 24px 0 72px; }
+  .versions > .wrap > p { color: var(--muted); margin: 0 0 20px; font-size: 14px; }
+  .card { background: var(--surface); border: 1px solid var(--rule-strong); border-radius: var(--radius); padding: 18px 20px; margin: 0 0 12px; transition: border-color var(--t); }
+  .card:hover { border-color: var(--gold); }
+  .card h3 { margin: 0; font: 600 22px/1.2 var(--display); display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+  .card time { font: 400 12px/1 var(--body); color: var(--muted); }
+  .chip { font: 600 11px/1 var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--gold-soft); border: 1px solid var(--gold); border-radius: 999px; padding: 4px 8px; }
+  .notes { margin-top: 10px; font-size: 14px; color: var(--ink-2); }
+  .notes p { margin: 0 0 8px; }
+  .notes h4 { margin: 14px 0 4px; font: 500 11px/1.4 var(--label); letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
+  .notes ul { margin: 0 0 8px; padding-left: 20px; }
+  .notes li { margin: 0 0 4px; }
+  .notes code { font: 12px ui-monospace, Menlo, monospace; background: var(--bg); border-radius: 4px; padding: 1px 5px; }
+  .state { color: var(--muted); }
+  .skeleton { height: 92px; border-radius: var(--radius); margin: 0 0 12px; background: linear-gradient(90deg, #1C1B22, #26242D, #1C1B22) 0 0 / 200% 100%; animation: sk 1.4s linear infinite; }
+  @keyframes sk { to { background-position: -200% 0; } }
+  @media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } .btn { transition: none; } }
+  footer { border-top: 1px solid var(--rule-strong); padding: 24px 0; color: var(--muted); font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <span class="brand"><img src="icon.png" alt="" width="28" height="28">Pantheon</span>
+    <button class="lang" id="lang" type="button" lang="en" aria-label="Switch to English">English</button>
+  </div>
+</header>
+<div class="meander" aria-hidden="true"></div>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <img src="icon.png" alt="" width="112" height="112">
+      <p class="kicker" data-t="kicker">Conselho de IAs</p>
+      <h1 data-t="title">Um conselho de IAs para a sua organização</h1>
+      <p class="lead" data-t="lead">O Pantheon é um app para Mac que junta o que a sua organização sabe e põe assistentes de IA para trabalhar com isso. Eles rodam no seu próprio Mac, com o Claude Code que você já usa. Guarde documentos e notas, faça perguntas e receba respostas com as fontes citadas.</p>
+      <a class="btn" id="download" href="https://github.com/PantheonApp/pantheonapp.github.io/releases" rel="noopener" data-t="download">Baixar para Mac</a>
+      <p class="small" id="download-note" data-t="downloadNote">Para Apple Silicon (M1 ou mais novo), macOS 13 ou mais recente.</p>
+    </div>
+  </section>
+
+  <section class="versions" aria-labelledby="versions-title">
+    <div class="wrap">
+      <h2 id="versions-title" data-t="versions">Versões</h2>
+      <p data-t="versionsSub">O que mudou em cada versão.</p>
+      <div id="list" aria-live="polite"><div class="skeleton"></div><div class="skeleton"></div></div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span data-t="footer">Esta página não usa rastreadores nem serviços externos, só a lista pública de versões do GitHub.</span></div></footer>
+
+<script>
+(function () {
+  "use strict";
+  var REPO = "PantheonApp/pantheonapp.github.io";
+  var API = "https://api.github.com/repos/" + REPO + "/releases";
+  var PAGE = "https://github.com/" + REPO + "/releases";
+  var T = {
+    pt: {
+      kicker: "Conselho de IAs", title: "Um conselho de IAs para a sua organização",
+      lead: "O Pantheon é um app para Mac que junta o que a sua organização sabe e põe assistentes de IA para trabalhar com isso. Eles rodam no seu próprio Mac, com o Claude Code que você já usa. Guarde documentos e notas, faça perguntas e receba respostas com as fontes citadas.",
+      download: "Baixar para Mac", downloadVersion: "Baixar a versão {v} para Mac",
+      downloadNote: "Para Apple Silicon (M1 ou mais novo), macOS 13 ou mais recente.",
+      versions: "Versões", versionsSub: "O que mudou em cada versão.",
+      latest: "Mais nova", empty: "Ainda não há versões publicadas.",
+      failed: "Não foi possível carregar a lista de versões agora. Veja todas na página de versões do GitHub.", failedLink: "Abrir a página de versões",
+      footer: "Esta página não usa rastreadores nem serviços externos, só a lista pública de versões do GitHub.",
+      switchLabel: "Switch to English", switchText: "English", locale: "pt-BR"
+    },
+    en: {
+      kicker: "Council of AIs", title: "A council of AIs for your organization",
+      lead: "Pantheon is a Mac app that gathers what your organization knows and puts AI assistants to work on it. They run on your own Mac, with the Claude Code you already use. Keep documents and notes, ask questions and get answers with the sources cited.",
+      download: "Download for Mac", downloadVersion: "Download version {v} for Mac",
+      downloadNote: "For Apple Silicon (M1 or newer), macOS 13 or later.",
+      versions: "Versions", versionsSub: "What changed in each version.",
+      latest: "Latest", empty: "No versions have been published yet.",
+      failed: "The list of versions could not be loaded right now. See all of them on the GitHub releases page.", failedLink: "Open the releases page",
+      footer: "This page uses no trackers and no outside services, only GitHub's public list of releases.",
+      switchLabel: "Mudar para português", switchText: "Português", locale: "en"
+    }
+  };
+  var lang = (navigator.language || "pt").toLowerCase().indexOf("en") === 0 ? "en" : "pt";
+  var releases = null, failed = false, latestUrl = null, latestVersion = null;
+  var $ = function (id) { return document.getElementById(id); };
+  var el = function (tag, text, cls) { var e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; };
+  // only links that point at this repository's own releases are ever put in an href
+  var safe = function (u) { return typeof u === "string" && u.indexOf("https://github.com/" + REPO + "/") === 0 ? u : null; };
+
+  // the notes are plain markdown from CHANGELOG.md: headings, bullets (with wrapped lines) and `code`; text goes in with textContent
+  function inline(parent, text) {
+    text.split(/(`[^`]+`)/).forEach(function (part) {
+      if (/^`[^`]+`$/.test(part)) parent.appendChild(el("code", part.slice(1, -1))); else if (part) parent.appendChild(document.createTextNode(part));
+    });
+  }
+  function notes(md) {
+    var box = el("div", null, "notes"), ul = null, li = null, p = null;
+    String(md || "").split(/\r?\n/).forEach(function (line) {
+      var h = /^#{2,4}\s+(.*)$/.exec(line), b = /^[-*]\s+(.*)$/.exec(line);
+      if (h) { ul = li = p = null; box.appendChild(el("h4", h[1])); }
+      else if (b) { if (!ul) { ul = el("ul"); box.appendChild(ul); } li = el("li"); inline(li, b[1]); ul.appendChild(li); p = null; }
+      else if (!line.trim()) { ul = li = p = null; }
+      else if (li) { li.appendChild(document.createTextNode(" ")); inline(li, line.trim()); }
+      else if (p) { p.appendChild(document.createTextNode(" ")); inline(p, line.trim()); }
+      else { p = el("p"); inline(p, line.trim()); box.appendChild(p); }
+    });
+    return box;
+  }
+
+  function render() {
+    var t = T[lang];
+    document.documentElement.lang = t.locale;
+    document.querySelectorAll("[data-t]").forEach(function (n) { if (t[n.getAttribute("data-t")]) n.textContent = t[n.getAttribute("data-t")]; });
+    var sw = $("lang"); sw.textContent = t.switchText; sw.setAttribute("aria-label", t.switchLabel); sw.setAttribute("lang", lang === "pt" ? "en" : "pt-BR");
+    var dl = $("download");
+    dl.href = latestUrl || PAGE;
+    dl.textContent = latestVersion ? t.downloadVersion.replace("{v}", latestVersion) : t.download;
+    var list = $("list"); list.textContent = "";
+    if (failed) {
+      var s = el("p", t.failed + " ", "state"), a = el("a", t.failedLink); a.href = PAGE; a.rel = "noopener"; s.appendChild(a); list.appendChild(s); return;
+    }
+    if (releases === null) { list.appendChild(el("div", null, "skeleton")); list.appendChild(el("div", null, "skeleton")); return; }
+    if (!releases.length) { list.appendChild(el("p", t.empty, "state")); return; }
+    releases.forEach(function (r, i) {
+      var card = el("article", null, "card"), h = el("h3", r.name || r.tag_name);
+      if (i === 0) h.appendChild(el("span", t.latest, "chip"));
+      if (r.published_at) {
+        var tm = el("time", new Date(r.published_at).toLocaleDateString(t.locale, { year: "numeric", month: "long", day: "numeric" })); tm.setAttribute("datetime", r.published_at); h.appendChild(tm);
+      }
+      card.appendChild(h); card.appendChild(notes(r.body)); list.appendChild(card);
+    });
+  }
+
+  $("lang").addEventListener("click", function () { lang = lang === "pt" ? "en" : "pt"; render(); });
+  render();
+
+  fetch(API, { headers: { Accept: "application/vnd.github+json" }, referrerPolicy: "no-referrer", credentials: "omit" })
+    .then(function (r) { if (!r.ok) throw new Error("status " + r.status); return r.json(); })
+    .then(function (all) {
+      releases = (Array.isArray(all) ? all : []).filter(function (r) { return !r.draft && !r.prerelease; });
+      var first = releases[0];
+      if (first) {
+        latestVersion = String(first.tag_name || "").replace(/^v/, "");
+        (first.assets || []).forEach(function (a) { if (/\.dmg$/.test(a.name || "") && safe(a.browser_download_url)) latestUrl = a.browser_download_url; });
+      }
+      render();
+    })
+    .catch(function () { failed = true; render(); });
+})();
+</script>
+</body>
+</html>
