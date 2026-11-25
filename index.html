@@ -73,7 +73,7 @@
                 <div class="who" id="sel-who"></div>
                 <p id="sel-text"></p>
               </div>
-              <a class="btn btn-line btn-sm" href="#recursos"><span id="sel-link"></span> <span class="arrow" aria-hidden="true">→</span></a>
+              <a class="btn btn-line btn-sm" id="sel-go" href="#recursos"><span id="sel-link"></span> <span class="arrow" aria-hidden="true">→</span></a>
               <button type="button" class="ghost" id="resume" data-t="resume">Voltar à conversa</button>
             </div>
           </div>
@@ -81,13 +81,28 @@
       </div>
     </section>
 
-    <!-- features: the eight demos come in the next change; for now the heading the nav points at -->
+    <!-- features: the picked god explains his area, next to a demo of it -->
     <section id="recursos" class="sec">
       <div class="wrap sec-in">
         <div class="sec-head rv">
           <span class="eyebrow" data-t="navFeatures">Recursos</span>
           <h2 class="display" data-t="featuresTitle">Cada deus explica o que faz por você</h2>
           <p class="muted" data-t="featuresSub">Escolha um deus. Ele conta o que cuida, e ao lado você experimenta.</p>
+        </div>
+        <div class="picks" id="picks" role="tablist" aria-label="Deuses e recursos" data-t-label="picksLabel"></div>
+        <div class="show">
+          <div class="expl">
+            <div class="bob" id="show-art"></div>
+            <div class="talk" aria-live="polite">
+              <div class="who" id="show-who"></div>
+              <p id="show-words"></p>
+            </div>
+            <ul class="gain" id="show-gains"></ul>
+          </div>
+          <div class="win" id="panel" role="tabpanel">
+            <div class="win-bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="win-name">PANTHEON</span><span class="win-sp"></span></div>
+            <div id="demo"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -98,6 +113,22 @@
           <span class="eyebrow" data-t="navMarket">Marketplace</span>
           <h2 class="display" data-t="marketTitle">O que dá para instalar no panteão</h2>
           <p class="muted" data-t="marketSub">Um marketplace público, com índice assinado. Qualquer pessoa pode propor um item, e nenhum deles traz código para rodar.</p>
+        </div>
+        <div class="duo">
+          <div class="panel rv">
+            <div class="panel-head">
+              <span data-mascote="jano" data-tamanho="52"></span>
+              <div class="wt"><div class="eyebrow" data-t="mPubK">Publicado</div><div class="display" data-t="mPubT">No índice de hoje</div></div>
+            </div>
+            <div class="tabs" id="kinds" role="group" aria-label="Mostrar" data-t-label="mShow"></div>
+            <div class="items" id="items"></div>
+            <a class="textlink" href="https://github.com/PantheonApp/pantheon-marketplace" rel="noopener" data-t="mRepo">Abrir o repositório do marketplace</a>
+          </div>
+          <div class="panel rv">
+            <div class="wt"><div class="eyebrow" data-t="mContribK">Contribuir</div><div class="display" data-t="mContribT">Como publicar um item</div></div>
+            <ol class="how" id="how"></ol>
+            <a class="textlink" href="https://github.com/PantheonApp/pantheon-marketplace/blob/main/CONTRIBUTING.pt-BR.md" rel="noopener" data-t="mGuide">Ler o guia de contribuição</a>
+          </div>
         </div>
       </div>
     </section>
