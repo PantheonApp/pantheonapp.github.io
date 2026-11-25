@@ -27,7 +27,7 @@
       <a href="#como" data-t="navHow">Como funciona</a>
     </nav>
     <div class="top-actions">
-      <a class="btn btn-gold btn-sm" href="#baixar" data-t="download">Baixar para Mac</a>
+      <a class="btn btn-gold btn-sm" href="#baixar"><span class="wide" data-t="download">Baixar para Mac</span><span class="narrow" data-t="downloadShort">Baixar</span></a>
       <button class="lang" id="lang" type="button" lang="en" aria-label="Switch to English">English</button>
     </div>
   </header>
@@ -63,6 +63,7 @@
           <span class="ember e4" aria-hidden="true"></span>
           <span class="ember e5" aria-hidden="true"></span>
           <div class="gods" id="gods" role="group" aria-label="Os deuses do conselho" data-t-label="godsLabel"></div>
+          <p class="sr" id="temple-live" aria-live="polite"></p>
           <div class="plate">
             <div class="plate-row" id="plate-talk" hidden>
               <span class="muted plate-hint" data-t="plateHint">Eles conversam entre si. Clique num deus para ele se apresentar.</span>
@@ -93,7 +94,7 @@
         <div class="show">
           <div class="expl">
             <div class="bob" id="show-art"></div>
-            <div class="talk" aria-live="polite">
+            <div class="talk" id="show-talk" aria-live="polite">
               <div class="who" id="show-who"></div>
               <p id="show-words"></p>
             </div>
@@ -183,7 +184,8 @@
             <span class="eyebrow" data-t="versions">Versões</span>
             <h2 class="display" id="versions-title" data-t="versionsSub">O que mudou em cada versão</h2>
           </div>
-          <div class="rels" id="list" aria-live="polite"><div class="skeleton"></div><div class="skeleton"></div></div>
+          <p class="state sr" id="list-state" aria-live="polite">Carregando a lista de versões.</p>
+          <div class="rels" id="list"><div class="skeleton"></div><div class="skeleton"></div></div>
         </div>
       </div>
     </section>

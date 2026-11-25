@@ -13,7 +13,7 @@ const TALKS = [["vulcano", "dedalo"], ["mercurio", "minerva"], ["jano", "argus"]
 const T = {
   pt: {
     navLabel: "Seções", navFeatures: "Recursos", navMarket: "Marketplace", navHow: "Como funciona",
-    download: "Baixar para Mac", seeFeatures: "Ver os recursos",
+    download: "Baixar para Mac", downloadShort: "Baixar", seeFeatures: "Ver os recursos",
     kicker: "Conselho de IAs", title: "Um conselho de IAs para a sua organização",
     lead: "O Pantheon junta o que a sua organização sabe e põe assistentes para trabalhar com isso. Eles rodam no seu Mac, com o Claude Code que você já usa.",
     requires: "Apple Silicon, macOS 13 ou mais recente", version: "versão {v}",
@@ -32,7 +32,7 @@ const T = {
     size: "Arquivo de {n} MB. ", updates: "O app se atualiza sozinho depois de instalado.",
     allVersions: "Ver todas as versões e o que mudou em cada uma",
     versions: "Versões", versionsSub: "O que mudou em cada versão",
-    latest: "Mais nova", empty: "Ainda não há versões publicadas.",
+    loading: "Carregando a lista de versões.", latest: "Mais nova", empty: "Ainda não há versões publicadas.",
     failed: "Não foi possível carregar a lista de versões agora. Veja todas na página de versões do GitHub.", failedLink: "Abrir a página de versões",
     footerTag: "Um conselho de IAs para a sua organização.", backTop: "Voltar ao topo",
     footer: "Esta página não usa rastreadores nem serviços externos, só a lista pública de versões do GitHub.",
@@ -125,7 +125,7 @@ const T = {
   },
   en: {
     navLabel: "Sections", navFeatures: "Features", navMarket: "Marketplace", navHow: "How it works",
-    download: "Download for Mac", seeFeatures: "See the features",
+    download: "Download for Mac", downloadShort: "Download", seeFeatures: "See the features",
     kicker: "Council of AIs", title: "A council of AIs for your organization",
     lead: "Pantheon gathers what your organization knows and puts assistants to work on it. They run on your Mac, with the Claude Code you already use.",
     requires: "Apple Silicon, macOS 13 or later", version: "version {v}",
@@ -144,7 +144,7 @@ const T = {
     size: "A {n} MB file. ", updates: "The app updates itself once installed.",
     allVersions: "See every version and what changed in each one",
     versions: "Versions", versionsSub: "What changed in each version",
-    latest: "Latest", empty: "No versions have been published yet.",
+    loading: "Loading the list of versions.", latest: "Latest", empty: "No versions have been published yet.",
     failed: "The list of versions could not be loaded right now. See all of them on the GitHub releases page.", failedLink: "Open the releases page",
     footerTag: "A council of AIs for your organization.", backTop: "Back to top",
     footer: "This page uses no trackers and no outside services, only GitHub's public list of releases.",
@@ -293,8 +293,13 @@ function buildGods() {
     const shade = el("span", null, "shade");
     shade.setAttribute("aria-hidden", "true");
     b.append(art, shade, el("span", null, "god-name"));
-    // the god introduces himself here and becomes the one explaining in the features
-    b.addEventListener("click", () => { set({ auto: false, god: i }); pickFeature(i); });
+    // the god introduces himself here and becomes the one explaining in the features; only the plate is announced
+    b.addEventListener("click", () => {
+      set({ auto: false, god: i });
+      const g = god(id);
+      $("temple-live").textContent = g[0] + " · " + g[1] + ". " + intro(g[3]);
+      pickFeature(i, false, true);
+    });
     gw.appendChild(b);
     box.appendChild(gw);
     return b;
@@ -318,8 +323,9 @@ function renderTemple() {
     shown = key;
     const old = document.querySelector(".gods .say");
     if (old) old.remove();
+    // the talk is decoration for the eyes: it is not a live region, or a screen reader would be cut off every 3.2 s
     const say = el("div", saying, "say " + side(speaker) + " pop0");
-    say.setAttribute("role", "status");
+    say.setAttribute("data-side", side(speaker));
     buttons[speaker].parentNode.insertBefore(say, buttons[speaker]);
     keepInside(say);
   }
@@ -342,15 +348,42 @@ function keepInside(say) {
   else if (r.left < stage.left + 4) say.className = say.className.replace(/say-[clr]/, "say-l");
 }
 
-setInterval(() => {
-  if (!st.auto || st.paused) return;
+// the window changed size: the balloon goes back to its own side and is measured again
+let placing = 0;
+function replaceSay() {
+  cancelAnimationFrame(placing);
+  placing = requestAnimationFrame(() => {
+    const say = document.querySelector(".gods .say");
+    if (!say) return;
+    say.className = say.className.replace(/say-[clr]/, say.getAttribute("data-side"));
+    keepInside(say);
+  });
+}
+window.addEventListener("resize", replaceSay);
+window.addEventListener("orientationchange", replaceSay);
+
+// The talk only moves while the temple is on screen. Every start of the clock gives the current line its full 3.2 s.
+let clock = 0, inView = true;
+function tick() {
+  if (!st.auto || st.paused || !inView) return;
   if (st.phase === 0) set({ phase: 1 });
   else set({ phase: 0, talk: (st.talk + 1) % TALKS.length });
-}, 3200);
+}
+function restartClock() { clearInterval(clock); clock = setInterval(tick, 3200); }
+restartClock();
+if (typeof IntersectionObserver === "function") {
+  new IntersectionObserver((list) => list.forEach((e) => {
+    const was = inView;
+    inView = e.isIntersecting;
+    if (inView && !was) restartClock();
+  })).observe($("stage"));
+}
 
-$("pause").addEventListener("click", () => set({ paused: !st.paused }));
+$("pause").addEventListener("click", () => { set({ paused: !st.paused }); restartClock(); });
 $("resume").addEventListener("click", () => {
-  set({ auto: true, paused: false, phase: 0 });
+  // back to the talk as it was: a pause the person chose, or the one reduced motion starts with, stays
+  set({ auto: true, phase: 0 });
+  restartClock();
   // the button that had the focus is gone: the focus goes to the one that took its place
   $("pause").focus();
 });
@@ -594,8 +627,15 @@ function buildPicks() {
   });
 }
 
-function pickFeature(i, focus) {
-  if (i !== fs.sel) { fs.sel = i; renderFeatures(); }
+// quiet: the pick came from the temple, which already announced the god, so the balloon here stays silent this once
+function pickFeature(i, focus, quiet) {
+  if (i !== fs.sel) {
+    fs.sel = i;
+    const live = $("show-talk");
+    if (quiet) live.setAttribute("aria-live", "off");
+    renderFeatures();
+    if (quiet) setTimeout(() => live.setAttribute("aria-live", "polite"), 1000);
+  }
   if (focus) tabs[i].focus();
 }
 
@@ -688,14 +728,18 @@ function renderReleases() {
   dl.href = latestUrl || PAGE;
   $("download-text").textContent = latestVersion ? t.downloadVersion.replace("{v}", latestVersion) : t.download;
   $("download-note").textContent = (latestMB ? t.size.replace("{n}", latestMB) : "") + t.updates;
-  const list = $("list");
-  list.textContent = "";
-  if (failed) {
-    const s = el("p", t.failed + " ", "state"), a = el("a", t.failedLink);
-    a.href = PAGE; a.rel = "noopener"; s.appendChild(a); list.appendChild(s); return;
+  // the one live part is the state line: loading (for screen readers only, the skeletons show it), a failure, or
+  // no versions; the list itself is not live, so the release notes are never read out on their own
+  const list = $("list"), state = $("list-state");
+  const want = failed ? t.failed + " " + t.failedLink : releases === null ? t.loading : releases.length ? "" : t.empty;
+  state.className = failed || (releases && !releases.length) ? "state" : "state sr";
+  if (state.textContent !== want) {
+    state.textContent = failed ? t.failed + " " : want;
+    if (failed) { const a = el("a", t.failedLink); a.href = PAGE; a.rel = "noopener"; state.appendChild(a); }
   }
+  list.textContent = "";
+  if (failed || (releases && !releases.length)) return;
   if (releases === null) { list.appendChild(el("div", null, "skeleton")); list.appendChild(el("div", null, "skeleton")); return; }
-  if (!releases.length) { list.appendChild(el("p", t.empty, "state")); return; }
   releases.forEach((r, i) => {
     const card = el("article", null, "rel"), h = el("h3", r.name || r.tag_name);
     if (i === 0) h.appendChild(el("span", t.latest, "tag"));
